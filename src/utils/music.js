@@ -32,8 +32,11 @@ export function initMusicPlayer() {
         isPlaying = true;
         musicContainer.classList.add('playing');
         musicContainer.classList.remove('paused');
+        
+        // 音乐成功播放后，彻底移除用户手势唤醒监听
+        removeGestureListeners();
       }).catch(err => {
-        console.log("浏览器拦截音频自动播放，等待用户手势激活:", err);
+        console.log("浏览器拦截音频自动播放，等待真实的物理交互:", err);
       });
     }
   };
@@ -75,15 +78,22 @@ export function initMusicPlayer() {
     document.addEventListener('WeixinJSBridgeReady', autoPlayWechat, false);
   }
 
-  // 2. 浏览器全屏手势唤醒（首次点击、长按、下滑、微触）
-  const handleUserGesture = () => {
+  // 2. 浏览器全屏手势唤醒（首次点击、长按、滑动）
+  const handleUserGesture = (e) => {
+    // 防御：如果是代码触发的 scroll，不具备 isTrusted（部分浏览器有效）
+    // 直接尝试播放，播放成功才会在 then() 里卸载监听器
     startPlay();
-    ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
-      document.removeEventListener(evt, handleUserGesture, true);
-    });
   };
 
-  ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
-    document.addEventListener(evt, handleUserGesture, true);
+  const gestureEvents = ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'];
+  
+  gestureEvents.forEach(evt => {
+    document.addEventListener(evt, handleUserGesture, { capture: true, passive: true });
   });
+
+  function removeGestureListeners() {
+    gestureEvents.forEach(evt => {
+      document.removeEventListener(evt, handleUserGesture, { capture: true });
+    });
+  }
 }
