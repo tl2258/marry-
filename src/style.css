@@ -619,16 +619,20 @@ body {
 
 .gallery-item {
   position: relative;
+  display: inline-block; /* 关键：修复 Safari 瀑布流图片被纵向压缩变形的 Bug */
+  width: 100%;
   border-radius: 4px; /* 更锐利的高级感圆角 */
   overflow: hidden;
   border: none;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   background: var(--bg-pearl);
+  transform: translateZ(0); /* 强制硬件加速，彻底解决 iOS 图片被压扁的 Bug */
   
   /* 瀑布流关键属性：防止卡片被截断 */
   break-inside: avoid;
   margin-bottom: 16px;
+  -webkit-column-break-inside: avoid;
 }
 
 .gallery-item img {
