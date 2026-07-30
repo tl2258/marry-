@@ -1,16 +1,52 @@
 import { weddingConfig } from '../config.js';
 
 /**
- * 最佳导航方案：直接调用腾讯地图 Marker H5
- * 在微信内打开时，腾讯地图 H5 自带“导航”按钮，点击会调用微信原生的地图选择器
- * 完美支持拉起高德、百度、苹果地图，彻底避免 URL 乱码和浏览器拦截问题。
+ * 唤起导航 modal 选择器 (支持腾讯地图与高德地图)
  */
 export function openMapSelector() {
   const { latitude, longitude, hotelName, address } = weddingConfig.location;
   
-  // 腾讯地图统一跳转协议
+  // 动态生成 URL，利用原生的 encodeURIComponent 确保编码正确，彻底避免之前硬编码带来的乱码问题
+  const amapUrl = `https://uri.amap.com/marker?position=${longitude},${latitude}&name=${encodeURIComponent(hotelName)}&src=wedding_h5&callnative=1`;
   const qqMapUrl = `https://apis.map.qq.com/uri/v1/marker?marker=coord:${latitude},${longitude};title:${encodeURIComponent(hotelName)};addr:${encodeURIComponent(address)}&referer=wedding_h5`;
-  
-  // 直接跳转，享受微信原生支持
-  window.location.href = qqMapUrl;
+
+  const modalHtml = `
+    <div id="map-modal-overlay" class="map-modal-overlay">
+      <div class="map-modal-card">
+        <div class="map-modal-header">
+          <h3>请选择导航地图</h3>
+          <button id="close-map-modal" class="close-btn">&times;</button>
+        </div>
+        <div class="map-modal-body">
+          <p class="map-location-title">📍 ${hotelName}</p>
+          <p class="map-location-sub">${address}</p>
+          <div class="map-options">
+            <a href="${qqMapUrl}" target="_blank" class="map-btn qq-btn">
+              <span class="map-icon">🐧</span>
+              <span>腾讯 / 微信地图 (推荐)</span>
+            </a>
+            <a href="${amapUrl}" target="_blank" class="map-btn amap-btn">
+              <span class="map-icon">🗺️</span>
+              <span>高德地图</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  let existing = document.getElementById('map-modal-overlay');
+  if (existing) existing.remove();
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  document.getElementById('close-map-modal').addEventListener('click', () => {
+    document.getElementById('map-modal-overlay').remove();
+  });
+
+  document.getElementById('map-modal-overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'map-modal-overlay') {
+      document.getElementById('map-modal-overlay').remove();
+    }
+  });
 }
