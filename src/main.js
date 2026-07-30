@@ -36,10 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. 初始化弹幕墙历史留言
   initBulletWall();
 
-  // 9. 智能自动下滑体验 (8秒后自动下滑至下一屏)
+  // 9. 智能自动下滑体验
   initAutoScrollDown();
 
-  // 10. 绑定 RSVP 赴约表单提交事件
+  // 10. 高定设计：命运金线时间轴
+  initGoldenThread();
+
+  // 11. 绑定 RSVP 赴约表单提交事件
   const rsvpForm = document.getElementById('rsvp-form');
   if (rsvpForm) {
     rsvpForm.addEventListener('submit', async (e) => {
@@ -405,4 +408,38 @@ function initAutoScrollDown() {
       }
     }
   }, 4000);
+}
+
+// 高定设计：命运金线时间轴 (The Golden Thread)
+function initGoldenThread() {
+  const threadFill = document.getElementById('golden-thread');
+  if (!threadFill) return;
+
+  const updateThread = () => {
+    // 计算滚动进度 (0 到 100)
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (scrollHeight <= 0) return;
+    
+    let progress = (scrollTop / scrollHeight) * 100;
+    // 稍微加一点偏移，让用户没滚到底时线就快到底部，视觉上更连贯
+    progress = Math.min(progress + 2, 100); 
+    
+    threadFill.style.height = progress + '%';
+  };
+
+  // 监听滚动事件，使用 requestAnimationFrame 优化性能
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateThread();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // 初始化调用一次
+  updateThread();
 }

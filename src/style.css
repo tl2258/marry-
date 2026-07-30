@@ -75,6 +75,35 @@ body {
   z-index: 1;
 }
 
+/* ===== 命运金线时间轴 (The Golden Thread) ===== */
+.golden-thread-track {
+  position: fixed;
+  top: 0;
+  left: 40px; /* 放在左侧边缘，形成绝美的装订线错觉 */
+  width: 1.5px;
+  height: 100vh;
+  background: rgba(197, 160, 89, 0.15); /* 极淡的金线轨迹 */
+  z-index: 2;
+  pointer-events: none;
+}
+
+.golden-thread-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%; /* JS 动态控制 */
+  background: linear-gradient(180deg, rgba(197,160,89,0), var(--gold-subtle), var(--gold-dark));
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.6);
+  transition: height 0.1s ease-out;
+}
+
+@media (max-width: 768px) {
+  .golden-thread-track {
+    left: 8px; /* 手机端极其靠边，不影响阅读 */
+  }
+}
+
 /* 金线边框 */
 .gold-border {
   border: 1px solid var(--gold-border);
@@ -1193,17 +1222,7 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* 动效：滚动显现 */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.reveal-on-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Redundant reveal-on-scroll block removed. See bottom of file for active animation classes. */
 
 /* 页脚 Footer */
 .footer-section {
@@ -1245,16 +1264,20 @@ body {
   position: relative;
 }
 
-/* --- 滚动淡入与视差动画特效 (Scroll Reveal & Entry Animations) --- */
+/* --- 滚动淡入与视差光学动画特效 (Cinematic Optics Reveal) --- */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: opacity, transform;
+  transform: translateY(40px);
+  filter: blur(12px); /* 高定：电影级失焦模糊 */
+  transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform, filter;
 }
 .reveal-on-scroll.active {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0); /* 聚焦：清晰展现 */
 }
 
 @keyframes hero-fade-up {
