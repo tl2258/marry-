@@ -3,26 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>婚礼宾客赴约后台管理系统</title>
+  <title>婚礼宾客赴约与相册管理后台</title>
   <link rel="stylesheet" href="./src/style.css">
   <style>
     body {
       overflow-y: auto !important;
-      background: #0d0814;
-      padding: 24px 16px;
+      background-color: var(--bg-pearl, #FAF9F7) !important;
+      color: var(--text-ink, #332F2E);
+      padding: 32px 16px;
+      font-family: var(--font-body);
     }
     .admin-container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
     .admin-card {
-      background: rgba(24, 17, 36, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      background: var(--surface-card, #FFFFFF);
+      border: 1px solid var(--gold-border, #CFC5BC);
+      border-radius: var(--radius-lg, 12px);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-ambient, 0 10px 30px -10px rgba(51, 47, 46, 0.08));
     }
     .stats-grid {
       display: grid;
@@ -31,55 +34,124 @@
       margin-top: 16px;
     }
     .stat-box {
-      background: rgba(13, 8, 20, 0.6);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 16px;
+      background: var(--surface-champagne-light, #F8F1E9);
+      border: 1px solid var(--gold-border, #CFC5BC);
+      border-radius: var(--radius-md, 8px);
+      padding: 18px 16px;
       text-align: center;
     }
     .stat-val {
-      font-family: var(--font-serif);
-      font-size: 2rem;
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 2.2rem;
       font-weight: 700;
-      color: var(--accent-gold);
+      color: var(--rose-dusty, #7C5454);
     }
     .stat-desc {
       font-size: 0.8rem;
-      color: var(--text-sub);
+      font-weight: 600;
+      color: var(--text-muted, #7E766E);
       margin-top: 4px;
     }
     .table-wrapper {
       overflow-x: auto;
       margin-top: 16px;
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid var(--gold-border, #CFC5BC);
     }
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
       font-size: 0.85rem;
+      background: #FFFFFF;
     }
     th, td {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--glass-border);
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(207, 197, 188, 0.4);
     }
     th {
-      color: var(--text-gold);
-      background: rgba(13, 8, 20, 0.4);
+      color: var(--text-ink, #332F2E);
+      background: var(--surface-champagne, #F3E5D8);
       font-weight: 600;
     }
     tr:hover {
-      background: rgba(255, 78, 136, 0.05);
+      background: rgba(212, 163, 163, 0.08);
     }
     .badge {
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 600;
     }
-    .badge-success { background: rgba(7, 193, 96, 0.2); color: #07c160; }
-    .badge-danger { background: rgba(255, 78, 136, 0.2); color: #ff4e88; }
+    .badge-success { background: rgba(5, 150, 105, 0.1); color: #059669; border: 1px solid rgba(5, 150, 105, 0.3); }
+    .badge-danger { background: rgba(220, 38, 38, 0.1); color: #DC2626; border: 1px solid rgba(220, 38, 38, 0.3); }
     
+    .btn-admin {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--text-primary, #665D53);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-admin:hover {
+      background: var(--rose-dusty, #7C5454);
+      transform: translateY(-1px);
+    }
+
+    /* 相册管理网格 */
+    .gallery-manage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .gallery-manage-item {
+      background: var(--bg-pearl-bright, #FCFBF9);
+      border: 1px solid var(--gold-border, #CFC5BC);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(51, 47, 46, 0.03);
+    }
+    .gallery-manage-thumb {
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 8px;
+      border: 1px solid var(--gold-border);
+    }
+    .upload-photo-btn {
+      background: var(--rose-dusty, #7C5454);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      transition: background 0.2s ease;
+    }
+    .upload-photo-btn:hover {
+      background: var(--text-primary);
+    }
+    .upload-file-input { display: none; }
+
     /* 登录 Overlay */
     .login-overlay {
       position: fixed;
@@ -87,7 +159,9 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #0d0814;
+      background: rgba(250, 249, 247, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 9999;
       display: flex;
       justify-content: center;
@@ -98,19 +172,22 @@
 </head>
 <body>
 
+  <!-- 丝绸暗纹微光蒙层 -->
+  <div class="silk-texture"></div>
+
   <!-- 登录密码 Modal -->
   <div id="login-overlay" class="login-overlay">
-    <div class="glass-card" style="max-width: 360px;">
-      <p class="script-sub">Security</p>
-      <h2 class="serif-title" style="font-size: 1.2rem; margin-bottom: 16px;">后台管理验证</h2>
-      <div class="form-group">
-        <label>请输入管理员密码</label>
+    <div class="admin-card" style="max-width: 380px; width: 100%; text-align: center;">
+      <div class="text-label-caps">SECURITY ACCESS</div>
+      <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--text-ink); margin-bottom: 20px;">后台管理验证</h2>
+      <div class="form-group" style="text-align: left;">
+        <label class="form-label">请输入管理员密码</label>
         <input type="password" id="admin-pass-input" class="form-input" placeholder="默认密码: admin">
       </div>
-      <button id="login-btn" class="btn-primary" style="width: 100%; margin-top: 16px;">
-        <span>解锁登录后台</span>
+      <button id="login-btn" class="btn-admin" style="width: 100%; margin-top: 20px; padding: 12px;">
+        <span>🔓 解锁登录后台</span>
       </button>
-      <p style="font-size: 0.75rem; color: var(--text-sub); margin-top: 12px;">密码可在 src/config.js 中更改</p>
+      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 14px;">密码可在 src/config.js 中自设置修改</p>
     </div>
   </div>
 
@@ -118,14 +195,15 @@
   <div class="admin-container">
     <div class="admin-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
       <div>
-        <h1 class="serif-title gold-gradient-text" style="font-size: 1.6rem;">💒 婚礼宾客赴约管理后台</h1>
-        <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">全流程 0 费用部署 | 数据实时汇总与 Excel 导出</p>
+        <div class="text-label-caps">ADMINISTRATION PANEL</div>
+        <h1 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--text-ink); margin-top: 4px;">💒 婚礼宾客赴约与相册管理后台</h1>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">实时数据汇总、全量 Excel 导出与相册动态管理</p>
       </div>
-      <div style="display: flex; gap: 10px;">
-        <button id="export-excel-btn" class="btn-primary">
+      <div style="display: flex; gap: 12px;">
+        <button id="export-excel-btn" class="btn-admin">
           <span>📊 导出 Excel 表格</span>
         </button>
-        <a href="./index.html" class="btn-primary" style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); text-decoration: none;">
+        <a href="./index.html" class="btn-admin" style="background: var(--surface-champagne); color: var(--text-ink); border: 1px solid var(--gold-border);">
           <span>返回 H5 请帖</span>
         </a>
       </div>
@@ -133,7 +211,7 @@
 
     <!-- 统计看板 -->
     <div class="admin-card">
-      <h3 style="color: var(--text-gold); font-size: 1.1rem;">📊 出席数据实时汇总</h3>
+      <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">📊 出席数据实时汇总</h3>
       <div class="stats-grid">
         <div class="stat-box">
           <div class="stat-val" id="stat-total-people">0</div>
@@ -148,7 +226,7 @@
           <div class="stat-desc">已提交回复户数</div>
         </div>
         <div class="stat-box">
-          <div class="stat-val" id="stat-absent-count" style="color: var(--primary-rose);">0</div>
+          <div class="stat-val" id="stat-absent-count" style="color: var(--text-muted);">0</div>
           <div class="stat-desc">遗憾无法出席户数</div>
         </div>
       </div>
@@ -158,53 +236,13 @@
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
         <div>
-          <h3 style="color: var(--text-gold); font-size: 1.1rem;">🖼️ 婚纱照与“定格瞬间”相册在线管理</h3>
-          <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">可在后台实时上传/更换主页“定格瞬间”展现的 9 张婚纱照！</p>
+          <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">🖼️ 婚纱照与“定格瞬间”相册在线管理</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">可在后台实时更换主页【定格瞬间】展现的 9 张婚纱照，实时生效！</p>
         </div>
-        <button id="reset-gallery-btn" style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: 0.8rem;">
+        <button id="reset-gallery-btn" class="btn-admin" style="background: var(--surface-champagne); color: var(--text-ink); border: 1px solid var(--gold-border); font-size: 0.78rem; padding: 6px 14px;">
           🔄 恢复初始相册
         </button>
       </div>
-
-      <style>
-        .gallery-manage-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-          gap: 16px;
-          margin-top: 16px;
-        }
-        .gallery-manage-item {
-          background: rgba(13, 8, 20, 0.6);
-          border: 1px solid var(--glass-border);
-          border-radius: 12px;
-          padding: 10px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        .gallery-manage-thumb {
-          width: 100%;
-          aspect-ratio: 4/5;
-          border-radius: 8px;
-          object-fit: cover;
-          margin-bottom: 8px;
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-        .upload-photo-btn {
-          background: var(--primary-rose, #d8a0a6);
-          color: #111;
-          border: none;
-          padding: 6px 10px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          border-radius: 6px;
-          cursor: pointer;
-          width: 100%;
-          margin-top: 4px;
-        }
-        .upload-file-input { display: none; }
-      </style>
 
       <div id="gallery-manage-grid" class="gallery-manage-grid">
         <!-- 动态渲染照片管理列表 -->
@@ -213,9 +251,9 @@
 
     <!-- 数据列表 -->
     <div class="admin-card">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="color: var(--text-gold); font-size: 1.1rem;">📝 宾客回复明细表</h3>
-        <input type="text" id="search-input" class="form-input" placeholder="搜索姓名/电话..." style="width: 200px; padding: 6px 12px; font-size: 0.8rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">📝 宾客回复明细表</h3>
+        <input type="text" id="search-input" class="form-input" placeholder="搜索姓名/电话..." style="width: 220px; padding: 8px 14px; font-size: 0.85rem;">
       </div>
 
       <div class="table-wrapper">
