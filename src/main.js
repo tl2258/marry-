@@ -395,30 +395,14 @@ function initAutoScrollDown() {
     window.addEventListener(evt, handleInteraction, { passive: true });
   });
 
-  // 延迟 3 秒后开始平滑下滑
+  // 延迟 4 秒后开始平滑下滑
   setTimeout(() => {
     if (!hasInteracted) {
-      isAutoScrolling = true;
-      let lastTime = 0;
-      // 设定下滑速度 (像素/毫秒)，控制得更快一点，每秒滑动约 120px
-      const pixelsPerMs = 120 / 1000; 
-
-      const autoScroll = (time) => {
-        if (hasInteracted) return; // 用户干预，随时打断
-        if (lastTime !== 0) {
-          const delta = time - lastTime;
-          window.scrollBy(0, delta * pixelsPerMs);
-        }
-        lastTime = time;
-        
-        // 如果滑到底部了则自动停止
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
-          return;
-        }
-        animationFrameId = requestAnimationFrame(autoScroll);
-      };
-      
-      animationFrameId = requestAnimationFrame(autoScroll);
+      const target = document.getElementById('countdown') || document.getElementById('couple');
+      if (target) {
+        // 使用浏览器原生的平滑滚动，确保 100% 丝滑无卡顿
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
-  }, 3000);
+  }, 4000);
 }
