@@ -154,6 +154,63 @@
       </div>
     </div>
 
+    <!-- 婚纱照与“定格瞬间”在线相册管理卡片 -->
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <h3 style="color: var(--text-gold); font-size: 1.1rem;">🖼️ 婚纱照与“定格瞬间”相册在线管理</h3>
+          <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">可在后台实时上传/更换主页“定格瞬间”展现的 9 张婚纱照！</p>
+        </div>
+        <button id="reset-gallery-btn" style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: 0.8rem;">
+          🔄 恢复初始相册
+        </button>
+      </div>
+
+      <style>
+        .gallery-manage-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 16px;
+          margin-top: 16px;
+        }
+        .gallery-manage-item {
+          background: rgba(13, 8, 20, 0.6);
+          border: 1px solid var(--glass-border);
+          border-radius: 12px;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .gallery-manage-thumb {
+          width: 100%;
+          aspect-ratio: 4/5;
+          border-radius: 8px;
+          object-fit: cover;
+          margin-bottom: 8px;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .upload-photo-btn {
+          background: var(--primary-rose, #d8a0a6);
+          color: #111;
+          border: none;
+          padding: 6px 10px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          border-radius: 6px;
+          cursor: pointer;
+          width: 100%;
+          margin-top: 4px;
+        }
+        .upload-file-input { display: none; }
+      </style>
+
+      <div id="gallery-manage-grid" class="gallery-manage-grid">
+        <!-- 动态渲染照片管理列表 -->
+      </div>
+    </div>
+
     <!-- 数据列表 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center;">

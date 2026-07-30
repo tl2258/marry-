@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import { weddingConfig } from './config.js';
 import { getStoredGuests } from './utils/notify.js';
+import { getCustomGallery, updateGalleryItem, resetGallery, compressUploadedImage } from './utils/galleryStore.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const loginOverlay = document.getElementById('login-overlay');
@@ -33,6 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const query = e.target.value.toLowerCase();
     renderTable(query);
   });
+
+  // 4. 重置相册按钮
+  const resetBtn = document.getElementById('reset-gallery-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('确定要恢复为初始预设婚纱相册吗？')) {
+        resetGallery();
+        renderGalleryManageGrid();
+        alert('相册已成功恢复为初始预设照片！');
+      }
+    });
+  }
 });
 
 function renderDashboard() {
@@ -58,6 +71,56 @@ function renderDashboard() {
   document.getElementById('stat-absent-count').innerText = absentCount;
 
   renderTable('');
+  renderGalleryManageGrid();
+}
+
+// 渲染后台相册管理网格
+function renderGalleryManageGrid() {
+  const grid = document.getElementById('gallery-manage-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const list = getCustomGallery();
+
+  list.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'gallery-manage-item';
+    div.innerHTML = `
+      <img src="${item.src}" class="gallery-manage-thumb" alt="${item.name}">
+      <span style="font-size: 0.75rem; color: var(--text-gold); margin-bottom: 6px;">${item.name}</span>
+      <button class="upload-photo-btn" data-index="${idx}">📷 更换照片</button>
+      <input type="file" class="upload-file-input" data-index="${idx}" accept="image/*">
+    `;
+
+    grid.appendChild(div);
+  });
+
+  // 绑定上传照片事件
+  grid.querySelectorAll('.upload-photo-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = e.target.getAttribute('data-index');
+      const fileInput = grid.querySelector(`.upload-file-input[data-index="${idx}"]`);
+      if (fileInput) fileInput.click();
+    });
+  });
+
+  grid.querySelectorAll('.upload-file-input').forEach(input => {
+    input.addEventListener('change', async (e) => {
+      const idx = parseInt(e.target.getAttribute('data-index'));
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const compressedBase64 = await compressUploadedImage(file);
+        updateGalleryItem(idx, compressedBase64);
+        renderGalleryManageGrid();
+        alert(`✓ 成功替换 ${list[idx].name} 的照片！`);
+      } catch (err) {
+        alert('照片处理失败，请重试！');
+        console.error(err);
+      }
+    });
+  });
 }
 
 function renderTable(query = '') {

@@ -3,6 +3,7 @@ import { weddingConfig } from './config.js';
 import { openMapSelector } from './utils/map.js';
 import { initMusicPlayer } from './utils/music.js';
 import { saveGuestRSVP, getStoredGuests } from './utils/notify.js';
+import { getCustomGallery } from './utils/galleryStore.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. 初始化悬浮音乐播放器
@@ -14,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. 开启精确到秒的倒计时
   startCountdown();
 
-  // 4. 绑定地图选择导航按钮
+  // 4. 动态渲染【定格瞬间】相册 (支持后台在线实时修改)
+  renderMomentsGallery();
+
+  // 5. 绑定地图选择导航按钮
   const mapBtn = document.getElementById('open-map-btn');
   if (mapBtn) {
     mapBtn.addEventListener('click', (e) => {
@@ -23,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. 初始化 Lightbox 相册大图放大
+  // 6. 初始化 Lightbox 相册大图放大
   initLightbox();
 
   // 6. 初始化 IntersectionObserver 元素滚动显现动效
@@ -266,4 +270,23 @@ function initParticleCanvas() {
   }
 
   draw();
+}
+
+// 动态渲染【定格瞬间】相册
+function renderMomentsGallery() {
+  const grid = document.querySelector('.gallery-grid');
+  if (!grid) return;
+  const list = getCustomGallery();
+  grid.innerHTML = '';
+
+  list.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item reveal-on-scroll visible';
+    div.setAttribute('data-img', item.src);
+    div.innerHTML = `
+      <img src="${item.src}" alt="${item.name}" loading="lazy">
+      <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+    `;
+    grid.appendChild(div);
+  });
 }
