@@ -30,5 +30,5 @@ export const weddingConfig = {
 
   // 5. 音乐配置
   // 背景音乐：Christina Perri - A Thousand Years
-  bgmUrl: "./years.mp3"
+  bgmUrl: "./Years.mp3"
 };

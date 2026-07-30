@@ -4,17 +4,16 @@ let audioInstance = null;
 let isPlaying = false;
 
 export function initMusicPlayer() {
-  // 避免重复初始化
   if (document.getElementById('music-player-btn')) return;
 
-  audioInstance = new Audio(weddingConfig.bgmUrl);
+  // 优先获取原生 DOM 音频节点
+  audioInstance = document.getElementById('wedding-bgm') || new Audio(weddingConfig.bgmUrl);
   audioInstance.loop = true;
-  audioInstance.preload = 'auto';
 
   const musicContainer = document.createElement('div');
   musicContainer.id = 'music-player-btn';
   musicContainer.className = 'music-player-btn paused';
-  musicContainer.setAttribute('title', '背景音乐控制');
+  musicContainer.setAttribute('title', '点击播放/暂停背景音乐');
   musicContainer.innerHTML = `
     <div class="cd-disc">
       <div class="cd-center"></div>
@@ -26,13 +25,16 @@ export function initMusicPlayer() {
 
   const startPlay = () => {
     if (isPlaying) return;
-    audioInstance.play().then(() => {
-      isPlaying = true;
-      musicContainer.classList.add('playing');
-      musicContainer.classList.remove('paused');
-    }).catch(err => {
-      console.log("音频播放需要用户手势激活:", err);
-    });
+    const playPromise = audioInstance.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        isPlaying = true;
+        musicContainer.classList.add('playing');
+        musicContainer.classList.remove('paused');
+      }).catch(err => {
+        console.log("等待用户交互唤醒音频播放:", err);
+      });
+    }
   };
 
   const pausePlay = () => {
@@ -53,7 +55,7 @@ export function initMusicPlayer() {
 
   musicContainer.addEventListener('click', togglePlay);
 
-  // 1. 微信 JSBridge 官方接口自动唤醒
+  // 微信生态内部自动播放核心逻辑
   const autoPlayWechat = () => {
     if (window.WeixinJSBridge) {
       window.WeixinJSBridge.invoke('getNetworkType', {}, () => {
@@ -69,15 +71,15 @@ export function initMusicPlayer() {
     document.addEventListener('WeixinJSBridgeReady', autoPlayWechat, false);
   }
 
-  // 2. 页面任意首个用户手势（滑动/触摸/点击）全能兼容激活
+  // 页面手势唤醒（滑动、轻触）
   const handleUserGesture = () => {
     startPlay();
-    ['touchstart', 'touchend', 'click', 'scroll'].forEach(evt => {
+    ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
       document.removeEventListener(evt, handleUserGesture, true);
     });
   };
 
-  ['touchstart', 'touchend', 'click', 'scroll'].forEach(evt => {
+  ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
     document.addEventListener(evt, handleUserGesture, true);
   });
 }
