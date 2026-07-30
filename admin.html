@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>婚礼宾客赴约后台管理系统</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <style>
+    body {
+      overflow-y: auto !important;
+      background: #0d0814;
+      padding: 24px 16px;
+    }
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .admin-card {
+      background: rgba(24, 17, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .stat-box {
+      background: rgba(13, 8, 20, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-val {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+    .stat-desc {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    th {
+      color: var(--text-gold);
+      background: rgba(13, 8, 20, 0.4);
+      font-weight: 600;
+    }
+    tr:hover {
+      background: rgba(255, 78, 136, 0.05);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-success { background: rgba(7, 193, 96, 0.2); color: #07c160; }
+    .badge-danger { background: rgba(255, 78, 136, 0.2); color: #ff4e88; }
+    
+    /* 登录 Overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0d0814;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 登录密码 Modal -->
+  <div id="login-overlay" class="login-overlay">
+    <div class="glass-card" style="max-width: 360px;">
+      <p class="script-sub">Security</p>
+      <h2 class="serif-title" style="font-size: 1.2rem; margin-bottom: 16px;">后台管理验证</h2>
+      <div class="form-group">
+        <label>请输入管理员密码</label>
+        <input type="password" id="admin-pass-input" class="form-input" placeholder="默认密码: admin">
+      </div>
+      <button id="login-btn" class="btn-primary" style="width: 100%; margin-top: 16px;">
+        <span>解锁登录后台</span>
+      </button>
+      <p style="font-size: 0.75rem; color: var(--text-sub); margin-top: 12px;">密码可在 src/config.js 中更改</p>
+    </div>
+  </div>
+
+  <!-- 后台主界面 -->
+  <div class="admin-container">
+    <div class="admin-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 class="serif-title gold-gradient-text" style="font-size: 1.6rem;">💒 婚礼宾客赴约管理后台</h1>
+        <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">全流程 0 费用部署 | 数据实时汇总与 Excel 导出</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button id="export-excel-btn" class="btn-primary">
+          <span>📊 导出 Excel 表格</span>
+        </button>
+        <a href="./index.html" class="btn-primary" style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); text-decoration: none;">
+          <span>返回 H5 请帖</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 统计看板 -->
+    <div class="admin-card">
+      <h3 style="color: var(--text-gold); font-size: 1.1rem;">📊 出席数据实时汇总</h3>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="stat-total-people">0</div>
+          <div class="stat-desc">确认出席总人数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-tables-est">0</div>
+          <div class="stat-desc">预估宴会桌数 (10人/桌)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-total-records">0</div>
+          <div class="stat-desc">已提交回复户数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-absent-count" style="color: var(--primary-rose);">0</div>
+          <div class="stat-desc">遗憾无法出席户数</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据列表 -->
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="color: var(--text-gold); font-size: 1.1rem;">📝 宾客回复明细表</h3>
+        <input type="text" id="search-input" class="form-input" placeholder="搜索姓名/电话..." style="width: 200px; padding: 6px 12px; font-size: 0.8rem;">
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>姓名</th>
+              <th>出席状态</th>
+              <th>人数</th>
+              <th>联系电话</th>
+              <th>祝福留言</th>
+              <th>提交时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="guest-table-body">
+            <!-- 动态渲染 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/admin.js"></script>
+</body>
+</html>

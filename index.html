@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Eternal Love | 谭浪 & 龙红波 婚礼邀请函</title>
+  <meta name="description" content="诚挚邀请您参加谭浪与龙红波的婚礼，共同见证我们永恒的浪漫与幸福时刻！">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <!-- 丝绸暗纹微光蒙层 -->
+  <div class="silk-texture"></div>
+
+  <!-- 浪漫金粉与心形粒子 Canvas -->
+  <canvas id="bg-particle-canvas"></canvas>
+
+  <!-- 祝福弹幕墙 -->
+  <div id="bullet-container" class="bullet-container"></div>
+
+  <!-- 顶部磨砂玻璃浮动导航栏 -->
+  <header class="floating-header">
+    <a href="#hero" class="nav-brand">T & L</a>
+    <ul class="nav-links">
+      <li><a href="#hero">首页</a></li>
+      <li><a href="#couple">新人</a></li>
+      <li><a href="#moments">画廊</a></li>
+      <li><a href="#timeline">流程</a></li>
+      <li><a href="#venue">地点</a></li>
+    </ul>
+    <a href="#rsvp" class="nav-rsvp-btn">出席回执</a>
+  </header>
+
+  <!-- 悬浮留声机音乐播放器 (可在 js 中自动创建/控制) -->
+
+  <!-- ===== 1. Hero 封面 Section ===== -->
+  <section id="hero" class="section-hero">
+    <div class="hero-bg-wrapper">
+      <img src="./origin14.jpg" class="hero-img" alt="Tan Lang & Long Hongbo Wedding Cover">
+      <div class="hero-gradient-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+      <div class="hero-badge">ETERNAL LOVE DIGITAL INVITATION</div>
+      <h1 class="hero-names" id="couple-name-title">谭浪 & 龙红波</h1>
+      <p class="hero-date-location" id="display-date-str">2026.08.30 · 娄底温德姆星铂丽宴会艺术中心</p>
+
+      <div class="scroll-indicator" onclick="document.getElementById('countdown').scrollIntoView({behavior:'smooth'})">
+        <span>SCROLL TO EXPLORE</span>
+        <div class="scroll-indicator-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. 倒计时 Section ===== -->
+  <section id="countdown" class="countdown-section">
+    <div class="section" style="padding: 0;">
+      <div class="text-label-caps">COUNTDOWN TO OUR BIG DAY</div>
+      <h2 class="text-display-md">距离见证幸福时刻</h2>
+      
+      <div class="countdown-grid">
+        <div class="cd-card">
+          <div class="cd-num" id="cd-days">00</div>
+          <div class="cd-unit">DAYS 天</div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-num" id="cd-hours">00</div>
+          <div class="cd-unit">HOURS 时</div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-num" id="cd-mins">00</div>
+          <div class="cd-unit">MINUTES 分</div>
+        </div>
+        <div class="cd-card">
+          <div class="cd-num" id="cd-secs">00</div>
+          <div class="cd-unit">SECONDS 秒</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. 浪漫寄语 Section ===== -->
+  <section class="section reveal-on-scroll">
+    <div class="text-script-title">Ethereal Union</div>
+    <div class="gold-divider"><span>♡</span></div>
+    <p class="text-body-lead">
+      "Love is not finding someone to live with,<br>
+      it's finding someone you can't live without."
+    </p>
+    <p style="margin-top: 16px; font-size: 0.95rem; color: var(--text-primary); text-align: center; line-height: 1.8;">
+      于千万人之中，恰好遇见你<br>从春秋冬夏，到晨昏星光，余生请多指教。
+    </p>
+  </section>
+
+  <!-- ===== 4. 新郎与新娘 Section (The Couple) ===== -->
+  <section id="couple" class="section couple-section">
+    <div class="text-label-caps">THE COUPLE</div>
+    <h2 class="text-display-md">新人风采</h2>
+
+    <div class="staggered-wrapper">
+      <!-- 新郎卡片 -->
+      <div class="staggered-card reveal-on-scroll">
+        <div class="staggered-img-box">
+          <img src="./xinlang.jpg" alt="Groom Tan Lang">
+        </div>
+        <div class="staggered-info">
+          <div class="staggered-role">GROOM / 新郎</div>
+          <h3 class="staggered-name" id="groom-name-text">谭浪</h3>
+          <p class="staggered-desc">"遇见你，是我生命中最美好的幸运。愿与你执子之手，走过漫长岁月与每一处风景。"</p>
+        </div>
+      </div>
+
+      <!-- 新娘卡片 -->
+      <div class="staggered-card reveal-on-scroll">
+        <div class="staggered-img-box">
+          <img src="./xinniang.jpg" alt="Bride Long Hongbo">
+        </div>
+        <div class="staggered-info">
+          <div class="staggered-role">BRIDE / 新娘</div>
+          <h3 class="staggered-name" id="bride-name-text">龙红波</h3>
+          <p class="staggered-desc">"因为有你，未来的每一天都充满了期待。愿我们的爱，如满天星辰般闪耀永恒。"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. 婚纱照画廊 Section (Moments Gallery) ===== -->
+  <section id="moments" class="gallery-section">
+    <div class="section" style="padding: 0;">
+      <div class="text-label-caps">MEMORABLE MOMENTS</div>
+      <h2 class="text-display-md">定格璀璨瞬间</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">点击任意照片可全屏放大预览</p>
+
+      <div class="gallery-grid">
+        <div class="gallery-item reveal-on-scroll" data-img="./origin4.jpg">
+          <img src="./origin4.jpg" alt="Moments 1" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin5.jpg">
+          <img src="./origin5.jpg" alt="Moments 2" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin6.jpg">
+          <img src="./origin6.jpg" alt="Moments 3" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin7.jpg">
+          <img src="./origin7.jpg" alt="Moments 4" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin8.jpg">
+          <img src="./origin8.jpg" alt="Moments 5" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin9.jpg">
+          <img src="./origin9.jpg" alt="Moments 6" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin10.jpg">
+          <img src="./origin10.jpg" alt="Moments 7" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin11.jpg">
+          <img src="./origin11.jpg" alt="Moments 8" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+        <div class="gallery-item reveal-on-scroll" data-img="./origin12.jpg">
+          <img src="./origin12.jpg" alt="Moments 9" loading="lazy">
+          <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. 婚礼流程时间轴 (Timeline & Schedule) ===== -->
+  <section id="timeline" class="section timeline-section">
+    <div class="text-label-caps">TIMELINE OF EVENTS</div>
+    <h2 class="text-display-md">婚礼流程与安排</h2>
+
+    <div class="timeline-grid">
+      <!-- 迎宾 -->
+      <div class="timeline-card reveal-on-scroll">
+        <div class="timeline-icon">🍸</div>
+        <div class="timeline-time">10:30 AM</div>
+        <h3 class="timeline-title">宾客签到与迎宾酒会</h3>
+        <p class="timeline-desc">签到留念，享用精美茶歇与浪漫轻音乐，在温馨氛围中交流打卡。</p>
+      </div>
+
+      <!-- 仪式 -->
+      <div class="timeline-card reveal-on-scroll">
+        <div class="timeline-icon">💍</div>
+        <div class="timeline-time">11:58 AM</div>
+        <h3 class="timeline-title">神圣婚礼仪式</h3>
+        <p class="timeline-desc">新娘入场、交换戒指与庄严誓言，在亲朋好友的祝福中迈入幸福人生新篇章。</p>
+      </div>
+
+      <!-- 合影与酒会 -->
+      <div class="timeline-card reveal-on-scroll">
+        <div class="timeline-icon">🥂</div>
+        <div class="timeline-time">12:30 PM</div>
+        <h3 class="timeline-title">喜宴答谢</h3>
+        <p class="timeline-desc">新人敬酒、互动抽奖与欢聚喜宴，享用精选高定珍馐美馔。</p>
+      </div>
+
+      <!-- 晚宴与合影 -->
+      <div class="timeline-card reveal-on-scroll">
+        <div class="timeline-icon">📸</div>
+        <div class="timeline-time">02:00 PM</div>
+        <h3 class="timeline-title">合影与留念</h3>
+        <p class="timeline-desc">合影打卡留念，领取定制伴手礼，定格终身难忘的美好回忆。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 7. 婚礼地点与地图 (Venue & Map) ===== -->
+  <section id="venue" class="venue-section">
+    <div class="section" style="padding: 0;">
+      <div class="text-label-caps">THE VENUE</div>
+      <h2 class="text-display-md">婚礼地点与路线指引</h2>
+
+      <div class="venue-container">
+        <div class="venue-info-box reveal-on-scroll">
+          <div class="text-label-caps" style="color: var(--rose-dusty);">LOCATION & DETAILS</div>
+          <h3 class="text-display-md" id="map-hotel-text">娄底温德姆星铂丽宴会艺术中心</h3>
+          
+          <div class="venue-detail-list">
+            <div class="venue-detail-item">
+              <span class="icon">📅</span>
+              <div>
+                <strong>婚礼时间：</strong>
+                <span id="map-date-text">2026年8月30日 (农历7月十八) 11:58</span>
+              </div>
+            </div>
+            <div class="venue-detail-item">
+              <span class="icon">📍</span>
+              <div>
+                <strong>酒店地址：</strong>
+                <span id="map-address-text">娄底市娄星区西贸街与氐星路交汇处温德姆酒店4层</span>
+              </div>
+            </div>
+            <div class="venue-detail-item">
+              <span class="icon">🚗</span>
+              <div>
+                <strong>停车与泊车：</strong>
+                <span>酒店设有地下专属停车库，提供免费泊车及礼宾指引服务。</span>
+              </div>
+            </div>
+          </div>
+
+          <button id="open-map-btn" class="map-btn-trigger">
+            <span>🗺️ 一键开启地图导航</span>
+          </button>
+        </div>
+
+        <div class="venue-map-card reveal-on-scroll">
+          <img src="./origin13.jpg" class="venue-map-img" alt="Wyndham Banquet Center">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 8. RSVP 在线回执 Section ===== -->
+  <section id="rsvp" class="section rsvp-section">
+    <div class="text-label-caps">RSVP & BLESSINGS</div>
+    <h2 class="text-display-md">期待您的赴约与祝福</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 8px;">为了给您安排最舒适的席位，请填写下表告知我们：</p>
+
+    <div class="rsvp-container reveal-on-scroll">
+      <!-- 独立浪漫婚纱大图展示 (零重叠、零覆盖) -->
+      <div class="rsvp-photo-box">
+        <img src="./origin1.jpg" alt="Tan Lang & Long Hongbo Romance Banner">
+      </div>
+
+      <!-- 独立优雅回执表单卡片 -->
+      <div class="rsvp-card">
+        <form id="rsvp-form" class="rsvp-form">
+          <div class="form-group">
+            <label class="form-label">您的尊姓名</label>
+            <input type="text" id="guest-name" class="form-input" placeholder="请输入您的姓名" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">联系电话</label>
+              <input type="tel" id="guest-phone" class="form-input" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+              <label class="form-label">出席人数</label>
+              <select id="guest-count" class="form-select">
+                <option value="1">1 人出席</option>
+                <option value="2">2 人携家属</option>
+                <option value="3">3 人携家属</option>
+                <option value="4">4 人及以上</option>
+                <option value="0">遗憾无法前往</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">祝福留言</label>
+            <input type="text" id="guest-blessing" class="form-input" placeholder="写下您给新人的浪漫祝福吧~">
+          </div>
+
+          <button type="submit" class="rsvp-submit-btn">
+            💌 确认提交赴约回执
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox 图片放大 modal -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <div class="lightbox-content">
+      <button id="lightbox-close" class="lightbox-close">&times;</button>
+      <img id="lightbox-img" src="" alt="Zoomed Photo">
+    </div>
+  </div>
+
+  <!-- 页脚 Footer -->
+  <footer class="footer-section">
+    <p>© 2026 TAN LANG & LONG HONGBO WEDDING</p>
+    <div id="footer-secret-btn" class="footer-secret">爱的印记 · 管理暗号</div>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
