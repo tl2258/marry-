@@ -1429,3 +1429,126 @@ body {
     transform: translateX(-100%);
   }
 }
+
+/* ===== 11. 皇家火漆印章 RSVP 仪式感 Modal ===== */
+.wax-seal-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(250, 249, 247, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.wax-seal-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.envelope-container {
+  position: relative;
+  width: 320px;
+  height: 200px;
+  background: #FDFBF7;
+  border-radius: 4px;
+  box-shadow: 0 20px 40px rgba(51, 47, 46, 0.15);
+  transform: translateY(50px) scale(0.9);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wax-seal-modal.active .envelope-container {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.envelope-text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--gold-dark);
+  text-align: center;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* 盖章后文字浮现 */
+.wax-seal-modal.active .envelope-text {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 1.5s;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0; 
+  height: 0; 
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-top: 100px solid #F4EFEB;
+  z-index: 2;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.05));
+}
+
+.wax-seal {
+  position: absolute;
+  top: 100px; /* at the tip of the flap */
+  left: 50%;
+  transform: translate(-50%, -50%) scale(3);
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 30% 30%, #C5A059, #8C6A30);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+.wax-seal::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+
+.wax-seal span {
+  font-family: var(--font-display);
+  color: #FFE6A0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  letter-spacing: 1px;
+}
+
+/* 火漆印章砸下动画 */
+.wax-seal-modal.active .wax-seal {
+  animation: stamp-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation-delay: 0.6s; /* 等待信封浮现 */
+}
+
+@keyframes stamp-drop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

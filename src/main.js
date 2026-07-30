@@ -63,16 +63,37 @@ document.addEventListener('DOMContentLoaded', () => {
       // 实时追加到弹幕墙
       addBullet(`${name}: ${blessing}`);
 
-      // 触发 Confetti 浪漫彩带与心形花瓣
-      confetti({
-        particleCount: 120,
-        spread: 90,
-        origin: { y: 0.65 },
-        colors: ['#7C5454', '#C5A059', '#D4A3A3', '#FAF9F7']
-      });
+      // 高定交互：皇家火漆印章仪式感 (Royal Wax Seal Ceremony)
+      const modal = document.getElementById('wax-seal-modal');
+      if (modal) {
+        modal.classList.add('active');
+        
+        // 印章砸下后 1.2 秒触发满屏金箔彩带
+        setTimeout(() => {
+          confetti({
+            particleCount: 150,
+            spread: 90,
+            origin: { y: 0.6 },
+            colors: ['#7C5454', '#C5A059', '#D4A3A3', '#FAF9F7']
+          });
+        }, 1200);
 
-      alert(`💌 感谢 ${name} 的回复！赴约信息已提交，新人已收到您的真挚祝福！`);
-      rsvpForm.reset();
+        // 3.5 秒后关闭仪式感弹窗，重置表单
+        setTimeout(() => {
+          modal.classList.remove('active');
+          rsvpForm.reset();
+        }, 3500);
+      } else {
+        // Fallback
+        confetti({
+          particleCount: 120,
+          spread: 90,
+          origin: { y: 0.65 },
+          colors: ['#7C5454', '#C5A059', '#D4A3A3', '#FAF9F7']
+        });
+        alert(`💌 感谢 ${name} 的回复！新人已收到您的真挚祝福！`);
+        rsvpForm.reset();
+      }
     });
   }
 
