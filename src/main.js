@@ -395,13 +395,13 @@ function initAutoScrollDown() {
     window.addEventListener(evt, handleInteraction, { passive: true });
   });
 
-  // 延迟 4 秒后开始一点点缓慢下滑
+  // 延迟 3 秒后开始平滑下滑
   setTimeout(() => {
     if (!hasInteracted) {
       isAutoScrolling = true;
       let lastTime = 0;
-      // 设定下滑速度 (像素/毫秒)，控制得很慢，每秒滑动约 25px
-      const pixelsPerMs = 25 / 1000; 
+      // 设定下滑速度 (像素/毫秒)，控制得更快一点，每秒滑动约 120px
+      const pixelsPerMs = 120 / 1000; 
 
       const autoScroll = (time) => {
         if (hasInteracted) return; // 用户干预，随时打断
@@ -420,5 +420,5 @@ function initAutoScrollDown() {
       
       animationFrameId = requestAnimationFrame(autoScroll);
     }
-  }, 4000);
+  }, 3000);
 }
