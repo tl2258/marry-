@@ -23,7 +23,7 @@ export const weddingConfig = {
   // 3. 微信推送配置 (0费用)
   // 推荐使用 Server酱 (https://sct.ftqq.com/) 免费微信推送服务
   // 注册后获取 SendKey 填入下方，即可在微信中接收宾客赴约实时通知！
-  serverChanSendKey: "SCTxxxxxx", 
+  serverChanSendKey: "SCT387488TLpmDom8jJACBnPCtuw041e7q", 
 
   // 4. 后台管理配置
   adminPassword: "admin", // 后台登录默认密码 (也可自设)
