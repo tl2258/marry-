@@ -20,21 +20,37 @@ export const DEFAULT_SITE_PHOTOS = {
   ]
 };
 
-/**
- * 获取全站当前图片配置
- */
 export function getSitePhotos() {
   try {
+    // 自动清理极早期的遗留旧 Key
+    localStorage.removeItem('wedding_custom_gallery_v1');
+
     const raw = localStorage.getItem(SITE_PHOTOS_KEY);
     if (!raw) return DEFAULT_SITE_PHOTOS;
-    const data = JSON.parse(raw);
+    let data = JSON.parse(raw);
+
+    // 自动矫正旧版本未带 photos/ 目录前缀的破损路径
+    const fixPath = (url, fallback) => {
+      if (!url) return fallback;
+      if (url.startsWith('data:image')) return url; // 用户自定义上传的 Base64 保留
+      if (url.startsWith('./origin') || url.startsWith('./xinlang') || url.startsWith('./xinniang')) {
+        return url.replace('./', './photos/');
+      }
+      return url;
+    };
+
+    const cleanGallery = (data.gallery || DEFAULT_SITE_PHOTOS.gallery).map(item => ({
+      ...item,
+      src: fixPath(item.src, './photos/origin4.jpg')
+    }));
+
     return {
-      heroCover: data.heroCover || DEFAULT_SITE_PHOTOS.heroCover,
-      groomPhoto: data.groomPhoto || DEFAULT_SITE_PHOTOS.groomPhoto,
-      bridePhoto: data.bridePhoto || DEFAULT_SITE_PHOTOS.bridePhoto,
-      venuePhoto: data.venuePhoto || DEFAULT_SITE_PHOTOS.venuePhoto,
-      rsvpPhoto: data.rsvpPhoto || DEFAULT_SITE_PHOTOS.rsvpPhoto,
-      gallery: Array.isArray(data.gallery) && data.gallery.length > 0 ? data.gallery : DEFAULT_SITE_PHOTOS.gallery
+      heroCover: fixPath(data.heroCover, DEFAULT_SITE_PHOTOS.heroCover),
+      groomPhoto: fixPath(data.groomPhoto, DEFAULT_SITE_PHOTOS.groomPhoto),
+      bridePhoto: fixPath(data.bridePhoto, DEFAULT_SITE_PHOTOS.bridePhoto),
+      venuePhoto: fixPath(data.venuePhoto, DEFAULT_SITE_PHOTOS.venuePhoto),
+      rsvpPhoto: fixPath(data.rsvpPhoto, DEFAULT_SITE_PHOTOS.rsvpPhoto),
+      gallery: cleanGallery
     };
   } catch (e) {
     console.error("读取全站图片配置失败:", e);
@@ -117,6 +133,7 @@ export function moveGalleryPhoto(index, direction) {
  * 重置回初始预设图片
  */
 export function resetSitePhotos() {
+  localStorage.removeItem('wedding_custom_gallery_v1');
   localStorage.removeItem(SITE_PHOTOS_KEY);
 }
 
