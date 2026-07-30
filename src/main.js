@@ -273,19 +273,19 @@ function addBullet(author, blessingText) {
   el.className = 'danmaku-item';
   el.innerHTML = `<span class="danmaku-avatar">💌</span><span class="danmaku-author">${escapeHtml(name)}:</span><span class="danmaku-text">${escapeHtml(text)}</span>`;
 
-  // 随机分布在屏幕顶部 10% ~ 42% 轨道区域（规避盖住 Hero 中心名字）
-  const topPercent = Math.floor(Math.random() * 32) + 12;
+  // 随机分布在屏幕 8% ~ 48% 多条平行轨道
+  const topPercent = Math.floor(Math.random() * 40) + 8;
   el.style.top = `${topPercent}%`;
 
-  // 12s ~ 18s 随机平滑飘过动画
-  const duration = Math.random() * 6 + 12;
+  // 10s ~ 14s 标准平滑全屏飞行时间
+  const duration = Math.random() * 4 + 10;
   el.style.animationDuration = `${duration}s`;
 
   container.appendChild(el);
 
   setTimeout(() => {
     el.remove();
-  }, duration * 1000 + 500);
+  }, duration * 1000 + 300);
 }
 
 // Canvas 背景金粉与心形上升粒子

@@ -1264,66 +1264,67 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-/* ===== 10. 高奢浮动弹幕系统 (Danmaku Floating System) ===== */
+/* ===== 10. 高奢全屏浮动弹幕系统 (Standard Danmaku Fly System) ===== */
 .bullet-container {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 50vh;
+  width: 100vw;
+  height: 60vh;
   pointer-events: none;
-  z-index: 900;
+  z-index: 9999;
   overflow: hidden;
 }
 
 .danmaku-item {
   position: absolute;
-  left: 100%;
+  left: 0;
+  top: 15%;
   white-space: nowrap;
-  background: rgba(250, 249, 247, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--gold-border, #CFC5BC);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid #C5A059;
   border-radius: 30px;
   padding: 8px 18px;
-  box-shadow: 0 4px 20px rgba(51, 47, 46, 0.08);
-  color: var(--text-ink, #332F2E);
-  font-size: 0.88rem;
+  box-shadow: 0 4px 18px rgba(197, 160, 89, 0.25);
+  color: #332F2E;
+  font-size: 0.92rem;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  will-change: transform;
   animation: danmaku-fly linear forwards;
   pointer-events: auto;
   cursor: default;
-  transition: transform 0.2s ease;
 }
 
 .danmaku-item:hover {
   animation-play-state: paused;
-  transform: scale(1.06);
-  box-shadow: 0 8px 25px rgba(124, 84, 84, 0.2);
-  border-color: var(--rose-dusty, #7C5454);
+  transform: scale(1.08);
+  box-shadow: 0 8px 30px rgba(124, 84, 84, 0.3);
+  border-color: #7C5454;
 }
 
 .danmaku-avatar {
-  font-size: 1rem;
+  font-size: 1.05rem;
 }
 
 .danmaku-author {
   font-weight: 700;
-  color: var(--rose-dusty, #7C5454);
+  color: #7C5454;
 }
 
 .danmaku-text {
-  color: var(--text-ink, #332F2E);
-  font-weight: 500;
+  color: #332F2E;
+  font-weight: 600;
 }
 
 @keyframes danmaku-fly {
   0% {
-    transform: translateX(0);
+    transform: translateX(100vw);
   }
   100% {
-    transform: translateX(-130vw);
+    transform: translateX(-100%);
   }
 }
