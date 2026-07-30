@@ -36,7 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. 初始化弹幕墙历史留言
   initBulletWall();
 
-  // 9. 绑定 RSVP 赴约表单提交事件
+  // 9. 智能自动下滑体验 (8秒后自动下滑至下一屏)
+  initAutoScrollDown();
+
+  // 10. 绑定 RSVP 赴约表单提交事件
   const rsvpForm = document.getElementById('rsvp-form');
   if (rsvpForm) {
     rsvpForm.addEventListener('submit', async (e) => {
@@ -368,4 +371,27 @@ function initParticleCanvas() {
 // 转义 HTML 字符防 XSS
 function escapeHtml(str) {
   return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+// 智能自动下滑：若用户 6 秒内未手动滚动，则自动平滑进入下一屏
+function initAutoScrollDown() {
+  let hasScrolled = false;
+  
+  const handleScroll = () => {
+    hasScrolled = true;
+    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('touchmove', handleScroll);
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('touchmove', handleScroll, { passive: true });
+
+  setTimeout(() => {
+    if (!hasScrolled) {
+      const target = document.getElementById('countdown') || document.getElementById('couple');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, 6000);
 }
