@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>婚礼宾客赴远与相册管理后台</title>
+  <title>婚礼请帖全站图片与相册管理后台</title>
   <link rel="stylesheet" href="./src/style.css">
   <style>
     body {
@@ -111,10 +111,38 @@
       transform: translateY(-1px);
     }
 
-    /* 相册管理网格 */
+    /* 核心照片网格 */
+    .core-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .photo-card-item {
+      background: var(--bg-pearl-bright, #FCFBF9);
+      border: 1px solid var(--gold-border, #CFC5BC);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(51, 47, 46, 0.03);
+    }
+    .photo-thumb {
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 1px solid var(--gold-border);
+      background: #eee;
+    }
+
+    /* 【定格瞬间】相册排版网格 */
     .gallery-manage-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
@@ -127,32 +155,39 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(51, 47, 46, 0.03);
+      position: relative;
     }
-    .gallery-manage-thumb {
+    .btn-action-group {
+      display: flex;
+      gap: 6px;
       width: 100%;
-      aspect-ratio: 4/5;
-      border-radius: 8px;
-      object-fit: cover;
-      margin-bottom: 8px;
+      margin-top: 6px;
+    }
+    .btn-action {
+      flex: 1;
+      background: var(--surface-champagne);
       border: 1px solid var(--gold-border);
-    }
-    .upload-photo-btn {
-      background: var(--rose-dusty, #7C5454);
-      color: #FFFFFF;
-      border: none;
-      padding: 8px 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 20px;
+      color: var(--text-ink);
+      padding: 6px 4px;
+      font-size: 0.72rem;
+      border-radius: 6px;
       cursor: pointer;
-      width: 100%;
-      margin-top: 4px;
-      transition: background 0.2s ease;
+      font-weight: 600;
     }
-    .upload-photo-btn:hover {
-      background: var(--text-primary);
+    .btn-action:hover {
+      background: var(--rose-dusty);
+      color: #fff;
     }
+    .btn-danger-action {
+      background: rgba(220, 38, 38, 0.1);
+      color: #DC2626;
+      border: 1px solid rgba(220, 38, 38, 0.3);
+    }
+    .btn-danger-action:hover {
+      background: #DC2626;
+      color: #FFF;
+    }
+
     .upload-file-input { display: none; }
 
     /* 登录 Overlay */
@@ -199,8 +234,8 @@
     <div class="admin-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
       <div>
         <div class="text-label-caps">ADMINISTRATION PANEL</div>
-        <h1 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--text-ink); margin-top: 4px;">💒 婚礼宾客赴约与相册管理后台</h1>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">实时数据汇总、全量 Excel 导出与相册动态管理</p>
+        <h1 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--text-ink); margin-top: 4px;">💒 婚礼请帖全站图片与相册管理后台</h1>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">全站形象照更换、定格瞬间相册灵活排版增删与数据汇总</p>
       </div>
       <div style="display: flex; gap: 12px;">
         <button id="export-excel-btn" class="btn-admin">
@@ -212,7 +247,66 @@
       </div>
     </div>
 
-    <!-- 统计看板 -->
+    <!-- 1. H5 核心模块形象照管理 -->
+    <div class="admin-card">
+      <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">🌟 H5 请帖核心模块形象照管理</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">可直接上传替换 Hero 封面大图、新郎/新娘单人风采照与婚礼地点图！</p>
+      
+      <div class="core-photos-grid">
+        <div class="photo-card-item">
+          <img id="thumb-heroCover" class="photo-thumb" alt="Hero 封面">
+          <span style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">👑 首页 Hero 封面</span>
+          <button class="btn-admin" style="width: 100%; font-size: 0.78rem; padding: 6px;" onclick="document.getElementById('input-heroCover').click()">📷 更换封面图</button>
+          <input type="file" id="input-heroCover" class="upload-file-input" accept="image/*">
+        </div>
+
+        <div class="photo-card-item">
+          <img id="thumb-groomPhoto" class="photo-thumb" alt="新郎 谭浪">
+          <span style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">🤵 新郎 谭浪 风采照</span>
+          <button class="btn-admin" style="width: 100%; font-size: 0.78rem; padding: 6px;" onclick="document.getElementById('input-groomPhoto').click()">📷 更换新郎照片</button>
+          <input type="file" id="input-groomPhoto" class="upload-file-input" accept="image/*">
+        </div>
+
+        <div class="photo-card-item">
+          <img id="thumb-bridePhoto" class="photo-thumb" alt="新娘 龙红波">
+          <span style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">👰 新娘 龙红波 风采照</span>
+          <button class="btn-admin" style="width: 100%; font-size: 0.78rem; padding: 6px;" onclick="document.getElementById('input-bridePhoto').click()">📷 更换新娘照片</button>
+          <input type="file" id="input-bridePhoto" class="upload-file-input" accept="image/*">
+        </div>
+
+        <div class="photo-card-item">
+          <img id="thumb-venuePhoto" class="photo-thumb" alt="婚礼地点">
+          <span style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">💒 宴会艺术中心地点图</span>
+          <button class="btn-admin" style="width: 100%; font-size: 0.78rem; padding: 6px;" onclick="document.getElementById('input-venuePhoto').click()">📷 更换地点照片</button>
+          <input type="file" id="input-venuePhoto" class="upload-file-input" accept="image/*">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 【定格瞬间】相册动态增删与排序排版 -->
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">📸 【定格瞬间】相册增删与自由排版</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">支持新增照片、删除照片、更换照片，以及调整照片在请帖里的排列次序！</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="add-gallery-photo-btn" class="btn-admin" style="background: var(--rose-dusty); font-size: 0.8rem; padding: 6px 16px;">
+            ➕ 新增一张婚纱照
+          </button>
+          <button id="reset-gallery-btn" class="btn-admin" style="background: var(--surface-champagne); color: var(--text-ink); border: 1px solid var(--gold-border); font-size: 0.78rem; padding: 6px 14px;">
+            🔄 恢复初始默认
+          </button>
+          <input type="file" id="add-gallery-file-input" class="upload-file-input" accept="image/*">
+        </div>
+      </div>
+
+      <div id="gallery-manage-grid" class="gallery-manage-grid">
+        <!-- 动态渲染照片管理列表 -->
+      </div>
+    </div>
+
+    <!-- 3. 统计看板 -->
     <div class="admin-card">
       <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">📊 出席数据实时汇总</h3>
       <div class="stats-grid">
@@ -235,24 +329,7 @@
       </div>
     </div>
 
-    <!-- 婚纱照与“定格瞬间”在线相册管理卡片 -->
-    <div class="admin-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-        <div>
-          <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">🖼️ 婚纱照与“定格瞬间”相册在线管理</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">可在后台实时更换主页【定格瞬间】展现的 9 张婚纱照，实时生效！</p>
-        </div>
-        <button id="reset-gallery-btn" class="btn-admin" style="background: var(--surface-champagne); color: var(--text-ink); border: 1px solid var(--gold-border); font-size: 0.78rem; padding: 6px 14px;">
-          🔄 恢复初始相册
-        </button>
-      </div>
-
-      <div id="gallery-manage-grid" class="gallery-manage-grid">
-        <!-- 动态渲染照片管理列表 -->
-      </div>
-    </div>
-
-    <!-- 数据列表 -->
+    <!-- 4. 数据列表 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <h3 style="color: var(--text-ink); font-family: var(--font-display); font-size: 1.2rem;">📝 宾客回复明细表</h3>

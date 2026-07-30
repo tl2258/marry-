@@ -3,19 +3,19 @@ import { weddingConfig } from './config.js';
 import { openMapSelector } from './utils/map.js';
 import { initMusicPlayer } from './utils/music.js';
 import { saveGuestRSVP, getStoredGuests } from './utils/notify.js';
-import { getCustomGallery } from './utils/galleryStore.js';
+import { getSitePhotos } from './utils/galleryStore.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. 初始化悬浮音乐播放器
   initMusicPlayer();
 
-  // 2. 动态渲染配置文件数据
+  // 2. 动态渲染配置文件与全站自定义图片
   renderConfigData();
 
   // 3. 开启精确到秒的倒计时
   startCountdown();
 
-  // 4. 动态渲染【定格瞬间】相册 (支持后台在线实时修改)
+  // 4. 动态渲染【定格瞬间】相册 (支持后台增删排版与实时修改)
   renderMomentsGallery();
 
   // 5. 绑定地图选择导航按钮
@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 6. 初始化 Lightbox 相册大图放大
   initLightbox();
 
-  // 6. 初始化 IntersectionObserver 元素滚动显现动效
+  // 7. 初始化 IntersectionObserver 元素滚动显现动效
   initScrollReveal();
 
-  // 7. 初始化弹幕墙历史留言
+  // 8. 初始化弹幕墙历史留言
   initBulletWall();
 
-  // 8. 绑定 RSVP 赴约表单提交事件
+  // 9. 绑定 RSVP 赴约表单提交事件
   const rsvpForm = document.getElementById('rsvp-form');
   if (rsvpForm) {
     rsvpForm.addEventListener('submit', async (e) => {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 9. 暗号进入后台 (连续点击页脚 5 次)
+  // 10. 暗号进入后台 (连续点击页脚 5 次)
   let clickCount = 0;
   const footerBtn = document.getElementById('footer-secret-btn');
   if (footerBtn) {
@@ -82,12 +82,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 10. 初始化 Canvas 浪漫香槟金粒子与心形特效
+  // 11. 初始化 Canvas 浪漫香槟金粒子与心形特效
   initParticleCanvas();
 });
 
-// 渲染配置文件
+// 渲染配置文件与全站自定义图片
 function renderConfigData() {
+  const sitePhotos = getSitePhotos();
+
+  // 1. 核心形象照动态绑定
+  const heroCover = document.getElementById('hero-cover-img');
+  if (heroCover && sitePhotos.heroCover) heroCover.src = sitePhotos.heroCover;
+
+  const groomImg = document.getElementById('groom-photo-img');
+  if (groomImg && sitePhotos.groomPhoto) groomImg.src = sitePhotos.groomPhoto;
+
+  const brideImg = document.getElementById('bride-photo-img');
+  if (brideImg && sitePhotos.bridePhoto) brideImg.src = sitePhotos.bridePhoto;
+
+  const venueImg = document.getElementById('venue-photo-img');
+  if (venueImg && sitePhotos.venuePhoto) venueImg.src = sitePhotos.venuePhoto;
+
+  // 2. 文本信息绑定
   const coupleTitle = document.getElementById('couple-name-title');
   if (coupleTitle) coupleTitle.innerText = `${weddingConfig.groomName} & ${weddingConfig.brideName}`;
 
@@ -141,33 +157,56 @@ function startCountdown() {
   setInterval(update, 1000);
 }
 
-// Lightbox 相册图片大图预览
+// 动态渲染【定格瞬间】相册 (支持增删与自由排版)
+function renderMomentsGallery() {
+  const grid = document.querySelector('.gallery-grid');
+  if (!grid) return;
+
+  const sitePhotos = getSitePhotos();
+  const gallery = sitePhotos.gallery || [];
+  grid.innerHTML = '';
+
+  gallery.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item reveal-on-scroll visible';
+    div.setAttribute('data-img', item.src);
+    div.innerHTML = `
+      <img src="${item.src}" alt="${item.title || '婚纱照'}" loading="lazy">
+      <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
+    `;
+    grid.appendChild(div);
+  });
+
+  // 绑定 Lightbox
+  initLightbox();
+}
+
+// Lightbox 相册大图放大 Modal 逻辑
 function initLightbox() {
   const modal = document.getElementById('lightbox-modal');
   const modalImg = document.getElementById('lightbox-img');
   const closeBtn = document.getElementById('lightbox-close');
-
   if (!modal || !modalImg) return;
 
   document.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const imgSrc = item.getAttribute('data-img') || item.querySelector('img').src;
+    item.onclick = () => {
+      const imgSrc = item.getAttribute('data-img');
       modalImg.src = imgSrc;
       modal.classList.add('active');
-    });
+    };
   });
 
-  const closeModal = () => modal.classList.remove('active');
+  if (closeBtn) {
+    closeBtn.onclick = () => modal.classList.remove('active');
+  }
 
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.classList.remove('active');
+  };
 }
 
-// IntersectionObserver 元素出现渐显
+// IntersectionObserver 页面元素滚动淡入与浮现
 function initScrollReveal() {
-  const reveals = document.querySelectorAll('.reveal-on-scroll');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -176,23 +215,31 @@ function initScrollReveal() {
     });
   }, { threshold: 0.15 });
 
-  reveals.forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 }
 
-// 弹幕墙逻辑
+// 实时弹幕墙
 function initBulletWall() {
-  const guests = getStoredGuests();
-  // 先加入默认经典问候
-  const defaults = [
-    { name: '好友', blessing: '新婚快乐，百年好合！' },
-    { name: '家人', blessing: '祝福二位白头偕老，幸福满满！' }
-  ];
-  const allList = [...defaults, ...guests];
+  const container = document.getElementById('bullet-container');
+  if (!container) return;
 
-  allList.forEach((g, idx) => {
+  const guests = getStoredGuests();
+  const defaultBullets = [
+    "谭浪 & 龙红波 新婚快乐！百年好合！",
+    "祝福二位白头偕老，甜甜蜜蜜！",
+    "期待 8 月 30 日星铂丽宴会艺术中心相聚！",
+    "永结同心，永远幸福幸福！"
+  ];
+
+  const allBullets = guests
+    .filter(g => g.blessing)
+    .map(g => `${g.name}: ${g.blessing}`)
+    .concat(defaultBullets);
+
+  allBullets.forEach((text, i) => {
     setTimeout(() => {
-      addBullet(`${g.name}: ${g.blessing}`);
-    }, idx * 3000);
+      addBullet(text);
+    }, i * 2500);
   });
 }
 
@@ -200,17 +247,19 @@ function addBullet(text) {
   const container = document.getElementById('bullet-container');
   if (!container) return;
 
-  const bubble = document.createElement('div');
-  bubble.className = 'bullet-bubble';
-  bubble.innerText = text;
-  bubble.style.top = Math.floor(Math.random() * 120) + 'px';
-  bubble.style.animationDuration = (8 + Math.random() * 4) + 's';
+  const bullet = document.createElement('div');
+  bullet.className = 'bullet-item';
+  bullet.innerText = text;
+  bullet.style.top = `${Math.random() * 60 + 15}%`;
+  
+  container.appendChild(bullet);
 
-  container.appendChild(bubble);
-  setTimeout(() => { bubble.remove(); }, 12000);
+  setTimeout(() => {
+    bullet.remove();
+  }, 12000);
 }
 
-// Canvas 浪漫粒子背景
+// Canvas 背景金粉与心形上升粒子
 function initParticleCanvas() {
   const canvas = document.getElementById('bg-particle-canvas');
   if (!canvas) return;
@@ -225,17 +274,17 @@ function initParticleCanvas() {
   });
 
   const particles = [];
-  const numParticles = 24;
+  const particleCount = 28;
 
-  for (let i = 0; i < numParticles; i++) {
+  for (let i = 0; i < particleCount; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 2.5 + 1,
-      speedY: Math.random() * 0.4 + 0.15,
-      speedX: (Math.random() - 0.5) * 0.3,
-      opacity: Math.random() * 0.4 + 0.2,
-      isHeart: Math.random() > 0.65
+      size: Math.random() * 3 + 1,
+      speedY: Math.random() * 0.4 + 0.1,
+      speedX: (Math.random() - 0.5) * 0.2,
+      opacity: Math.random() * 0.5 + 0.2,
+      isHeart: Math.random() > 0.7
     });
   }
 
@@ -270,23 +319,4 @@ function initParticleCanvas() {
   }
 
   draw();
-}
-
-// 动态渲染【定格瞬间】相册
-function renderMomentsGallery() {
-  const grid = document.querySelector('.gallery-grid');
-  if (!grid) return;
-  const list = getCustomGallery();
-  grid.innerHTML = '';
-
-  list.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'gallery-item reveal-on-scroll visible';
-    div.setAttribute('data-img', item.src);
-    div.innerHTML = `
-      <img src="${item.src}" alt="${item.name}" loading="lazy">
-      <div class="gallery-overlay"><div class="gallery-zoom-icon">🔍</div></div>
-    `;
-    grid.appendChild(div);
-  });
 }
