@@ -210,7 +210,9 @@ function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entry.target.classList.add('active');
+        // 可选：触发后取消监听，只动画一次
+        observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.15 });
@@ -288,7 +290,7 @@ function addBullet(author, blessingText) {
   }, duration * 1000 + 300);
 }
 
-// Canvas 背景金粉与心形上升粒子
+// Canvas 背景金粉与心形上升粒子 (浪漫升级版：加入呼吸与摇曳效果)
 function initParticleCanvas() {
   const canvas = document.getElementById('bg-particle-canvas');
   if (!canvas) return;
@@ -303,17 +305,19 @@ function initParticleCanvas() {
   });
 
   const particles = [];
-  const particleCount = 28;
+  const particleCount = 35; // 增加粒子数量
 
   for (let i = 0; i < particleCount; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 3 + 1,
-      speedY: Math.random() * 0.4 + 0.1,
-      speedX: (Math.random() - 0.5) * 0.2,
+      size: Math.random() * 3.5 + 1.5,
+      speedY: Math.random() * 0.3 + 0.15,
+      speedX: (Math.random() - 0.5) * 0.3,
       opacity: Math.random() * 0.5 + 0.2,
-      isHeart: Math.random() > 0.7
+      isHeart: Math.random() > 0.65,
+      angle: Math.random() * Math.PI * 2,
+      spinSpeed: Math.random() * 0.02 - 0.01 // 摇摆角速度
     });
   }
 
@@ -322,21 +326,32 @@ function initParticleCanvas() {
 
     particles.forEach(p => {
       p.y -= p.speedY;
-      p.x += p.speedX;
+      // 增加正弦波摇曳效果，模拟微风
+      p.x += p.speedX + Math.sin(p.angle) * 0.4;
+      p.angle += p.spinSpeed;
 
-      if (p.y < 0) {
-        p.y = height;
+      if (p.y < -20) {
+        p.y = height + 20;
         p.x = Math.random() * width;
       }
+      if (p.x < -20) p.x = width + 20;
+      if (p.x > width + 20) p.x = -20;
 
       ctx.save();
-      ctx.globalAlpha = p.opacity;
+      // 让透明度随正弦波有轻微的呼吸闪烁
+      ctx.globalAlpha = p.opacity + (Math.sin(p.angle * 2) * 0.15);
+      if (ctx.globalAlpha < 0) ctx.globalAlpha = 0;
+      if (ctx.globalAlpha > 1) ctx.globalAlpha = 1;
+
       if (p.isHeart) {
         ctx.fillStyle = '#7C5454';
-        ctx.font = `${p.size * 3 + 4}px sans-serif`;
+        ctx.font = `${p.size * 3.5 + 4}px sans-serif`;
         ctx.fillText('♥', p.x, p.y);
       } else {
-        ctx.fillStyle = '#C5A059';
+        // 珍珠金微光发散点
+        ctx.fillStyle = '#D4AF37';
+        ctx.shadowBlur = p.size * 2;
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.6)';
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
