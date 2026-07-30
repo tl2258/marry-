@@ -349,3 +349,8 @@ function initParticleCanvas() {
 
   draw();
 }
+
+// 转义 HTML 字符防 XSS
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
