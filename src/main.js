@@ -218,45 +218,74 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 }
 
-// 实时弹幕墙
+// 升级版高奢全屏多轨道横向弹幕系统
 function initBulletWall() {
   const container = document.getElementById('bullet-container');
   if (!container) return;
+  container.innerHTML = '';
 
   const guests = getStoredGuests();
-  const defaultBullets = [
-    "谭浪 & 龙红波 新婚快乐！百年好合！",
-    "祝福二位白头偕老，甜甜蜜蜜！",
-    "期待 8 月 30 日星铂丽宴会艺术中心相聚！",
-    "永结同心，永远幸福幸福！"
+  const defaultBlessings = [
+    { name: '新婚大喜', text: '祝谭浪 & 龙红波 白头偕老，幸福美满！' },
+    { name: '好友送福', text: '愿你们执子之手，与子偕老，新婚快乐！' },
+    { name: '喜结良缘', text: '期待 8 月 30 日在温德姆星铂丽宴会艺术中心相聚！' },
+    { name: '永结同心', text: '祝新郎官谭浪和新娘子龙红波早生贵子！' },
+    { name: '百年好合', text: '佳偶天成，琴瑟和鸣，祝永远幸福甜蜜！' },
+    { name: '甜蜜长久', text: '祝你们的爱情如满天星辰般闪耀永恒！' }
   ];
 
-  const allBullets = guests
+  const userBlessings = guests
     .filter(g => g.blessing)
-    .map(g => `${g.name}: ${g.blessing}`)
-    .concat(defaultBullets);
+    .map(g => ({ name: g.name, text: g.blessing }));
 
-  allBullets.forEach((text, i) => {
+  const pool = [...userBlessings, ...defaultBlessings];
+
+  let index = 0;
+  function launchNext() {
+    if (pool.length === 0) return;
+    const item = pool[index % pool.length];
+    addBullet(item.name, item.text);
+    index++;
+    const nextDelay = Math.random() * 2000 + 1600; // 1.6s ~ 3.6s
+    setTimeout(launchNext, nextDelay);
+  }
+
+  // 初始快速派发 3 条弹幕
+  for (let i = 0; i < Math.min(3, pool.length); i++) {
     setTimeout(() => {
-      addBullet(text);
-    }, i * 2500);
-  });
+      addBullet(pool[i].name, pool[i].text);
+    }, i * 800);
+  }
+
+  setTimeout(launchNext, 2800);
 }
 
-function addBullet(text) {
+function addBullet(author, blessingText) {
   const container = document.getElementById('bullet-container');
   if (!container) return;
 
-  const bullet = document.createElement('div');
-  bullet.className = 'bullet-item';
-  bullet.innerText = text;
-  bullet.style.top = `${Math.random() * 60 + 15}%`;
-  
-  container.appendChild(bullet);
+  const textStr = blessingText ? `${author}: ${blessingText}` : author;
+  const parts = textStr.split(':');
+  const name = parts[0] || '好友';
+  const text = parts.slice(1).join(':') || '新婚快乐，百年好合！';
+
+  const el = document.createElement('div');
+  el.className = 'danmaku-item';
+  el.innerHTML = `<span class="danmaku-avatar">💌</span><span class="danmaku-author">${escapeHtml(name)}:</span><span class="danmaku-text">${escapeHtml(text)}</span>`;
+
+  // 随机分布在屏幕顶部 10% ~ 42% 轨道区域（规避盖住 Hero 中心名字）
+  const topPercent = Math.floor(Math.random() * 32) + 12;
+  el.style.top = `${topPercent}%`;
+
+  // 12s ~ 18s 随机平滑飘过动画
+  const duration = Math.random() * 6 + 12;
+  el.style.animationDuration = `${duration}s`;
+
+  container.appendChild(el);
 
   setTimeout(() => {
-    bullet.remove();
-  }, 12000);
+    el.remove();
+  }, duration * 1000 + 500);
 }
 
 // Canvas 背景金粉与心形上升粒子
