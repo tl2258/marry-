@@ -373,25 +373,52 @@ function escapeHtml(str) {
   return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-// 智能自动下滑：若用户 6 秒内未手动滚动，则自动平滑进入下一屏
+// 智能自动慢速下滑：若用户未手动滚动，则一点点缓慢匀速下滑 (类似电影字幕)
 function initAutoScrollDown() {
-  let hasScrolled = false;
+  let hasInteracted = false;
+  let animationFrameId;
+  let isAutoScrolling = false;
   
-  const handleScroll = () => {
-    hasScrolled = true;
-    window.removeEventListener('scroll', handleScroll);
-    window.removeEventListener('touchmove', handleScroll);
+  // 监听用户的真实物理交互
+  const handleInteraction = () => {
+    hasInteracted = true;
+    if (isAutoScrolling) {
+      cancelAnimationFrame(animationFrameId);
+      isAutoScrolling = false;
+    }
+    ['touchstart', 'wheel', 'mousedown', 'touchmove'].forEach(evt => {
+      window.removeEventListener(evt, handleInteraction);
+    });
   };
   
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  window.addEventListener('touchmove', handleScroll, { passive: true });
+  ['touchstart', 'wheel', 'mousedown', 'touchmove'].forEach(evt => {
+    window.addEventListener(evt, handleInteraction, { passive: true });
+  });
 
+  // 延迟 4 秒后开始一点点缓慢下滑
   setTimeout(() => {
-    if (!hasScrolled) {
-      const target = document.getElementById('countdown') || document.getElementById('couple');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    if (!hasInteracted) {
+      isAutoScrolling = true;
+      let lastTime = 0;
+      // 设定下滑速度 (像素/毫秒)，控制得很慢，每秒滑动约 25px
+      const pixelsPerMs = 25 / 1000; 
+
+      const autoScroll = (time) => {
+        if (hasInteracted) return; // 用户干预，随时打断
+        if (lastTime !== 0) {
+          const delta = time - lastTime;
+          window.scrollBy(0, delta * pixelsPerMs);
+        }
+        lastTime = time;
+        
+        // 如果滑到底部了则自动停止
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+          return;
+        }
+        animationFrameId = requestAnimationFrame(autoScroll);
+      };
+      
+      animationFrameId = requestAnimationFrame(autoScroll);
     }
-  }, 6000);
+  }, 4000);
 }
