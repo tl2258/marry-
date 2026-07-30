@@ -7,7 +7,7 @@ export function initMusicPlayer() {
   if (document.getElementById('music-player-btn')) return;
 
   // 优先获取原生 DOM 音频节点
-  audioInstance = document.getElementById('wedding-bgm') || new Audio(weddingConfig.bgmUrl);
+  audioInstance = document.getElementById('wedding-bgm') || new Audio(weddingConfig.bgmUrl || './Years.mp3');
   audioInstance.loop = true;
 
   const musicContainer = document.createElement('div');
@@ -24,7 +24,8 @@ export function initMusicPlayer() {
   document.body.appendChild(musicContainer);
 
   const startPlay = () => {
-    if (isPlaying) return;
+    if (!audioInstance) return;
+    audioInstance.muted = false;
     const playPromise = audioInstance.play();
     if (playPromise !== undefined) {
       playPromise.then(() => {
@@ -32,12 +33,13 @@ export function initMusicPlayer() {
         musicContainer.classList.add('playing');
         musicContainer.classList.remove('paused');
       }).catch(err => {
-        console.log("等待用户交互唤醒音频播放:", err);
+        console.log("浏览器拦截音频自动播放，等待用户手势激活:", err);
       });
     }
   };
 
   const pausePlay = () => {
+    if (!audioInstance) return;
     audioInstance.pause();
     isPlaying = false;
     musicContainer.classList.remove('playing');
@@ -49,13 +51,15 @@ export function initMusicPlayer() {
     if (isPlaying) {
       pausePlay();
     } else {
+      audioInstance.load();
       startPlay();
     }
   };
 
+  // 点击唱片图标强制开启/关闭播放
   musicContainer.addEventListener('click', togglePlay);
 
-  // 微信生态内部自动播放核心逻辑
+  // 1. 微信生态 JSBridge 自动唤醒
   const autoPlayWechat = () => {
     if (window.WeixinJSBridge) {
       window.WeixinJSBridge.invoke('getNetworkType', {}, () => {
@@ -71,7 +75,7 @@ export function initMusicPlayer() {
     document.addEventListener('WeixinJSBridgeReady', autoPlayWechat, false);
   }
 
-  // 页面手势唤醒（滑动、轻触）
+  // 2. 浏览器全屏手势唤醒（首次点击、长按、下滑、微触）
   const handleUserGesture = () => {
     startPlay();
     ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
