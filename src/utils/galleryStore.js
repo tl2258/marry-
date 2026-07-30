@@ -2,21 +2,21 @@ const SITE_PHOTOS_KEY = 'wedding_full_site_photos_v2';
 
 // 全站默认图片配置
 export const DEFAULT_SITE_PHOTOS = {
-  heroCover: './photos/origin14.jpg',
-  groomPhoto: './photos/xinlang.jpg',
-  bridePhoto: './photos/xinniang.jpg',
-  venuePhoto: './photos/origin13.jpg',
-  rsvpPhoto: './photos/origin1.jpg',
+  heroCover: './origin14.jpg',
+  groomPhoto: './xinlang.jpg',
+  bridePhoto: './xinniang.jpg',
+  venuePhoto: './origin13.jpg',
+  rsvpPhoto: './origin1.jpg',
   gallery: [
-    { id: 'm1', src: './photos/origin4.jpg', title: '定格瞬间 1' },
-    { id: 'm2', src: './photos/origin5.jpg', title: '定格瞬间 2' },
-    { id: 'm3', src: './photos/origin6.jpg', title: '定格瞬间 3' },
-    { id: 'm4', src: './photos/origin7.jpg', title: '定格瞬间 4' },
-    { id: 'm5', src: './photos/origin8.jpg', title: '定格瞬间 5' },
-    { id: 'm6', src: './photos/origin9.jpg', title: '定格瞬间 6' },
-    { id: 'm7', src: './photos/origin10.jpg', title: '定格瞬间 7' },
-    { id: 'm8', src: './photos/origin11.jpg', title: '定格瞬间 8' },
-    { id: 'm9', src: './photos/origin12.jpg', title: '定格瞬间 9' }
+    { id: 'm1', src: './origin4.jpg', title: '定格瞬间 1' },
+    { id: 'm2', src: './origin5.jpg', title: '定格瞬间 2' },
+    { id: 'm3', src: './origin6.jpg', title: '定格瞬间 3' },
+    { id: 'm4', src: './origin7.jpg', title: '定格瞬间 4' },
+    { id: 'm5', src: './origin8.jpg', title: '定格瞬间 5' },
+    { id: 'm6', src: './origin9.jpg', title: '定格瞬间 6' },
+    { id: 'm7', src: './origin10.jpg', title: '定格瞬间 7' },
+    { id: 'm8', src: './origin11.jpg', title: '定格瞬间 8' },
+    { id: 'm9', src: './origin12.jpg', title: '定格瞬间 9' }
   ]
 };
 
@@ -29,19 +29,15 @@ export function getSitePhotos() {
     if (!raw) return DEFAULT_SITE_PHOTOS;
     let data = JSON.parse(raw);
 
-    // 自动矫正旧版本未带 photos/ 目录前缀的破损路径
     const fixPath = (url, fallback) => {
       if (!url) return fallback;
       if (url.startsWith('data:image')) return url; // 用户自定义上传的 Base64 保留
-      if (url.startsWith('./origin') || url.startsWith('./xinlang') || url.startsWith('./xinniang')) {
-        return url.replace('./', './photos/');
-      }
-      return url;
+      return url.replace('./photos/', './');
     };
 
     const cleanGallery = (data.gallery || DEFAULT_SITE_PHOTOS.gallery).map(item => ({
       ...item,
-      src: fixPath(item.src, './photos/origin4.jpg')
+      src: fixPath(item.src, './origin4.jpg')
     }));
 
     return {
