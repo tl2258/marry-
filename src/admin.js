@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const passInput = document.getElementById('admin-pass-input');
   const loginBtn = document.getElementById('login-btn');
 
+  // 预渲染仪表盘与相册板块
+  renderDashboard();
+
   // 1. 登录逻辑
   const doLogin = () => {
     const val = passInput.value.trim();
