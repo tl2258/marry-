@@ -246,18 +246,18 @@ function initBulletWall() {
     const item = pool[index % pool.length];
     addBullet(item.name, item.text);
     index++;
-    const nextDelay = Math.random() * 2000 + 1600; // 1.6s ~ 3.6s
+    const nextDelay = Math.random() * 1500 + 1200; // 1.2s ~ 2.7s 平滑连续派发
     setTimeout(launchNext, nextDelay);
   }
 
-  // 初始快速派发 3 条弹幕
-  for (let i = 0; i < Math.min(3, pool.length); i++) {
+  // 刚进页面立刻连续派发 5 条高低错落的华丽弹幕
+  for (let i = 0; i < Math.min(5, pool.length); i++) {
     setTimeout(() => {
       addBullet(pool[i].name, pool[i].text);
-    }, i * 800);
+    }, i * 400);
   }
 
-  setTimeout(launchNext, 2800);
+  setTimeout(launchNext, 2200);
 }
 
 function addBullet(author, blessingText) {
