@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     footerBtn.addEventListener('click', () => {
       clickCount++;
       if (clickCount >= 5) {
-        window.location.href = './admin.html';
+        window.location.href = './admin.html?v=' + Date.now();
       }
     });
   }
